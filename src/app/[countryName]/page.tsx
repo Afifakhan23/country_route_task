@@ -1,3 +1,4 @@
+
 import Link from "next/link";
 
 interface ICountry {
@@ -15,15 +16,16 @@ const countries: ICountry[] = [
   { name: "SaudiArabia", population: 34193875, capital: "Riyadh" },
 ];
 
-const Page = ({ params }: { params: { countryName: string } }) => {
-  const { countryName } = params;
+// Page Component for Dynamic Route
+export default async function Page({ params }: { params: Promise<{ countryName: string }> }) {
+  const { countryName } = await params; // Wait for the Promise to resolve
 
   // Find the matching country
   const countryDetail = countries.find(
     (country) => country.name.toLowerCase() === countryName.toLowerCase()
   );
 
-  // If the country is invalid, show an alert and render a fallback
+  // If the country is invalid, show an alert and redirect
   if (!countryDetail) {
     return (
       <script>
@@ -34,21 +36,27 @@ const Page = ({ params }: { params: { countryName: string } }) => {
       </script>
     );
   }
+  // If the country is valid, show the details
   return (
     <div className="h-screen flex justify-center items-center font-bold text-2xl md:text-4xl bg-[#A3CB38] flex-col">
       <h2 className="py-5 md:pb-12 text-2xl md:text-6xl text-orange-700">COUNTRY DETAIL</h2>
-      <h2><span className="text-[#B33771]">Country : </span>{countryDetail.name}</h2>
-      <h2 className="my-5"><span className="text-[#B33771]">Capital : </span>{countryDetail.capital}</h2>
-      <h2><span className="text-[#B33771]">Population : </span>{countryDetail.population.toLocaleString()}</h2>
-      <Link href={'/'}>
+      <h2>
+        <span className="text-[#B33771]">Country: </span>
+        {countryDetail.name}
+      </h2>
+      <h2 className="my-5">
+        <span className="text-[#B33771]">Capital: </span>
+        {countryDetail.capital}
+      </h2>
+      <h2>
+        <span className="text-[#B33771]">Population: </span>
+        {countryDetail.population.toLocaleString()}
+      </h2>
+      <Link href="/">
         <button className="text-white bg-[#009432] text-2xl py-3 px-5 mt-5 rounded-full shadow-lg shadow-green-400">
           Go Back to Home
         </button>
       </Link>
     </div>
   );
-};
-
-export default Page;
-
-
+}
